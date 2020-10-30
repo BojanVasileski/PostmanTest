@@ -1,0 +1,287 @@
+{
+	"info": {
+		"_postman_id": "2ee03397-b7a3-4829-9561-506d2b12f1c0",
+		"name": "Get Instant Offer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "POST Appraisal Request ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "092ba7f1-8189-4708-9e4b-724c63aca8bf",
+						"exec": [
+							"var response = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.environment.set(\"appr_id\", response.appraisalId);\r",
+							"\r",
+							"pm.test(\"Status 201 Appraisal ID Created\",function(){\r",
+							"    pm.response.to.have.status(201);\r",
+							"})\r",
+							"\r",
+							"postman.setNextRequest(\"GET Appraisal Request by ID\")"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{api_key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"source\": \"Instant Offer\",\r\n  \"sourceId\": \"Instant Offer\",\r\n  \"vehicles\": [\r\n    {\r\n      \"marketZipCode\": \"23235\",\r\n      \"vin\": \"1FTYR10D62TA04184\",\r\n      \"mileage\": 103790\r\n    }\r\n  ],\r\n  \"customers\": [\r\n    {\r\n      \"firstName\": \"ICO\",\r\n      \"lastName\": \"Test\",\r\n      \"phoneNumbers\": [\r\n        {\r\n          \"phoneNumber\": \"8046665653\"\r\n        }\r\n      ],\r\n      \"emailAddresses\": [\r\n        {\r\n          \"emailAddress\": \"mail@gmail.com\"\r\n        }\r\n      ],\r\n      \"addresses\": [\r\n        {\r\n          \"addressLine1\": \"123 main st.\",\r\n          \"addressLine2\": \"333\",\r\n          \"city\": \"Richmond\",\r\n          \"stateCode\": \"VA\",\r\n          \"zipCode\": \"23225\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"tags\": {\r\n    \"additionalProp1\": \"string\",\r\n    \"additionalProp2\": \"string\",\r\n    \"additionalProp3\": \"string\"\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/appraisal-requests",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"appraisal-requests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Appraisal Request by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "05a084fe-e0b5-4e5f-be8d-75e540efafd8",
+						"exec": [
+							"var response = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"if(response.id === pm.environment.get(\"appr_id\")){\r",
+							"\r",
+							"pm.test(\"Matching appr_id\",function(){\r",
+							"    pm.expect(response.id).to.eql(pm.environment.get(\"appr_id\"));\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check if Instant Offer\",function(){\r",
+							"    pm.expect(response.source).to.eql(\"Instant Offer\");\r",
+							"})\r",
+							"\r",
+							"setTimeout(() => {},10000);\r",
+							"\r",
+							"postman.setNextRequest(\"POST Update Appraisal by ID\")\r",
+							"}else{\r",
+							"    console.log(\"Appraisal Request not found\");\r",
+							"    postman.setNextRequest(null);\r",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c45d8d38-220a-42d5-b89f-a2f8b1fd4852",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{api_key}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/appraisal-requests/{{appr_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"appraisal-requests",
+						"{{appr_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Update Appraisal by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9dd149ef-bad8-44c6-96ed-164b9882bd84",
+						"exec": [
+							"var response = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Appraisal Updated, Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"setTimeout(() => {},5000);\r",
+							"\r",
+							"postman.setNextRequest(\"GET Appraisal by ID\");"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{api_key}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Source\": \"Online Appraisal\",\r\n    \"SourceId\": \"Online Offer\",\r\n    \"vehicles\": [\r\n        {\r\n            \"specification\": {\r\n                \"year\": 2002,\r\n                \"makeCode\": \"FO\",\r\n                \"modelCode\": \"RANG\",\r\n                \"bodyCode\": \"R001\",\r\n                \"trimCode\": \"XL  \",\r\n                \"engineCode\": \"0030\",\r\n                \"cylinderCount\": 6,\r\n                \"transmissionCode\": \"A\",\r\n                \"driveCode\": \"4WD/AWD\",\r\n                \"interiorColorCode\": 1,\r\n                \"exteriorColorCode\": 2\r\n            },\r\n            \"questions\": [],\r\n            \"standardOptions\": [\r\n                {\r\n                    \"code\": \"2180\"\r\n                },\r\n                {\r\n                    \"code\": \"9550\"\r\n                },\r\n                {\r\n                    \"code\": \"1031\"\r\n                },\r\n                {\r\n                    \"code\": \"6010\"\r\n                }\r\n            ],\r\n            \"availableOptions\": [\r\n                {\r\n                    \"code\": \"2050\"\r\n                }\r\n            ],\r\n            \"conditions\": [\r\n                {\r\n                    \"code\": \"2050\"\r\n                },\r\n                {\r\n                    \"code\": \"1037\"\r\n                }\r\n            ],\r\n            \"images\": [],\r\n            \"marketZipCode\": \"23225\",\r\n            \"vin\": \"1FTYR10D62TA04184\",\r\n            \"mileage\": 111111,\r\n            \"productionNumber\": \"A04184\"\r\n        }\r\n    ],\r\n    \"customers\": [\r\n        {\r\n            \"firstName\": \"Man\",\r\n            \"lastName\": \"Stansky\",\r\n            \"phoneNumbers\": [\r\n                {\r\n                    \"phoneNumber\": \"8045551212\"\r\n                }\r\n            ],\r\n            \"emailAddresses\": [\r\n                {\r\n                    \"emailAddress\": \"mail@gmail.com\"\r\n                }\r\n            ],\r\n            \"addresses\": [\r\n                {\r\n                    \"addressLine1\": \"123 main st.\",\r\n                    \"addressLine2\": \"333\",\r\n                    \"city\": \"Richmond\",\r\n                    \"stateCode\": \"VA\",\r\n                    \"zipCode\": \"23225\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/appraisals/{{appr_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"appraisals",
+						"{{appr_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Appraisal by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "79d02e4e-37e0-4d07-a80e-a286a0d8d230",
+						"exec": [
+							"var response = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Instant Offer is present for Appaisal\", function(){\r",
+							"   pm.expect(response.hasOwnProperty('offers')).to.eql(true);\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "KMX-APIKEY TRtoHV54BEmRuFymlvgFMQ",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/appraisals/{{appr_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"appraisals",
+						"{{appr_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "f27235fd-140b-4f22-ac47-407cdd025c93",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "41ff1d4f-4584-4d09-9278-a918ba50b569",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "29779fa9-8b44-4f75-8766-352ebc2d45a9",
+			"key": "base_url",
+			"value": ""
+		},
+		{
+			"id": "c366454d-158f-4289-b676-6488e16d8568",
+			"value": "",
+			"disabled": true
+		},
+		{
+			"id": "45936a7c-5a58-43f3-950f-5b9965a0a886",
+			"key": "appr_id",
+			"value": "asd"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
